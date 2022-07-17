@@ -14,7 +14,7 @@ app.post("/", (req, res) => {
         return res.sendStatus(400);
 
     findWord(req.body)
-        .then(word => res.json(word));
+        .then(words => res.json(words));
 })
 
 app.listen(process.env.PORT ?? 3000)

@@ -1,22 +1,3 @@
-/*const t2 = {
-    len: 6,
-    positions: {
-        0: "B",
-        1: "A",
-        2: {not: ["E"]}
-    },
-    absents: ['J','K','L','T']
-}
-
-const t = {
-    len: 9,
-    positions: {
-        0: 'P',
-        4: {not: ["I"]}
-    },
-    absents: ['A','L','L', 'A','T','I','F']
-}*/
-
 module.exports = function validate({len,positions,absents}) {
     return (
         typeof(len) === "number" &&
