@@ -17,7 +17,9 @@ app.post("/", (req, res) => {
         .then(words => res.json(words));
 })
 
-app.listen(process.env.PORT ?? 3000)
+app.listen(process.env.PORT ?? 3000, () => {
+    console.log("Server listening");
+})
 
 initDb().then(() => {
     console.log("database initialisation finished");

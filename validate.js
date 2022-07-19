@@ -1,30 +1,24 @@
-module.exports = function validate({len,positions,absents}) {
+module.exports = function validate({len,levels, positions,absents}) {
     return (
         typeof(len) === "number" &&
-        typeof(positions) === "object" &&
-        !(positions instanceof Array) &&
-        absents instanceof Array &&
+        levels instanceof Array &&
+        !levels.some(({placeds,badPlaceds,absents}) =>
 
-        !Object.entries(positions).some(([key,value]) =>
-            parseInt(key).toString() !== key ||
-            (
-                typeof(value) !== "string" &&
-                typeof(value) !== "object"
-            ) ||
-            (
-                typeof(value) === "object" &&
-                (
-                    !(value.not instanceof Array) ||
-                    value.not.some(letter => typeof(letter) !== "string" || letter.length !== 1)
-                )
-            ) ||
-            (
-                typeof(value) === "string" &&
+            typeof(placeds) !== "object" ||
+            placeds instanceof Array ||
+
+            typeof(badPlaceds) !== "object" ||
+            badPlaceds instanceof Array ||
+
+            [...Object.entries(placeds), ...Object.entries(badPlaceds)].some(([key,value]) =>
+                parseInt(key).toString() !== key ||
+                typeof(value) != "string" ||
                 value.length !== 1
-            )
-        ) &&
+            ) ||
 
-        !absents.some(letter => typeof(letter) !== "string" || letter.length !== 1)
+            !(absents instanceof Array) ||
+            absents.some(letter => typeof(letter) !== "string" || letter.length !== 1)
+        )
     )
 
 }

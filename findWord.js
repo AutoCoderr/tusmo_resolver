@@ -60,17 +60,18 @@ function generateRegex({len,levels}) {
             ...acc,
             [key]: acc[key] ? [...acc[key], letter] : [letter]
         }), acc)
-    }), {})
+    }), {});
 
     return "^"+len.reduce((regex, i) =>
-            regex + allPlaceds[i] ?
+        regex + (
+            allPlaceds[i] ?
                 allPlaceds[i] :
                 allBadPlaceds[i] ?
-                    "[^"+[...allAbsents, ...allBadPlaceds[i]].join("")+"]" :
+                    "[^" + [...allAbsents, ...allBadPlaceds[i]].join("") + "]" :
                     allAbsents.length > 1 ?
-                        "[^"+allAbsents.join("")+"]" :
+                        "[^" + allAbsents.join("") + "]" :
                         "."
-        , "")+"$"
+        ), "")+"$"
 }
 
 module.exports = function findWord({len,levels}) {
@@ -99,7 +100,7 @@ module.exports = function findWord({len,levels}) {
                 const unknownIndexes = unknownIndexesByLevel[i];
 
                 return Object.entries(computedBadPlaceds).some(([letter,indexes]) => {
-                    const nbAppear = unknownIndexes.filter(index => !indexes.includes(index) && word[index] === letter).length
+                    const nbAppear = unknownIndexes.filter(index => !indexes.includes(index) && word.formattedWord[index] === letter).length
                     return (
                         nbAppear < indexes.length ||
                         (inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > indexes.length)
