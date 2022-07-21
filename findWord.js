@@ -1,18 +1,5 @@
 const Word = require("./models/Word");
-
-Number.prototype.reduce = function (callback,acc, i = 0) {
-    const n = this.valueOf();
-    if (i === n)
-        return acc;
-
-    return n.reduce(callback, callback(acc,i), i+1);
-}
-Number.prototype.filter = function(callback) {
-    return this.valueOf().reduce((acc,i) => [
-        ...acc,
-        ...(callback(i) ? [i] : [])
-    ], [])
-}
+require("./public/libs");
 
 /*const t = {
     len: 9,
@@ -95,7 +82,7 @@ module.exports = function findWord({len,levels}) {
         );
 
         return words.filter(word =>
-            !levels.some((level, i) => {
+            !levels.some(({absents}, i) => {
                 const computedBadPlaceds = computedBadPlacedsByLevel[i];
                 const unknownIndexes = unknownIndexesByLevel[i];
 
@@ -103,7 +90,8 @@ module.exports = function findWord({len,levels}) {
                     const nbAppear = unknownIndexes.filter(index => !indexes.includes(index) && word.formattedWord[index] === letter).length
                     return (
                         nbAppear < indexes.length ||
-                        (inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > indexes.length)
+                        (inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > indexes.length) ||
+                        (!inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > absents.length)
                     )
                 })
             })

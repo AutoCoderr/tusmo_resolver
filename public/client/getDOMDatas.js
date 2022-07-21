@@ -48,7 +48,7 @@ function getCellTypeAndLetter(cell) {
 
 
 function getTab() {
-	const tab = document.getElementsByClassName("motus-grid")[0];
+	const tab = document.querySelector(".game-column .motus-grid");
 	if (tab === undefined)
 		throw new Error("Tableau tusmo introuvable");
 	return tab;
