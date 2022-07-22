@@ -1,0 +1,31 @@
+#tusmo_resolver {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 500px;
+    height: 500px;
+    background-color: #EEE;
+}
+
+#search_button {
+    cursor: pointer;
+    background-color: #999;
+    padding: 2px 4px;
+}
+#search_button:hover {
+    background-color: #777;
+}
+
+.word {
+    color: black;
+    cursor: pointer;
+}
+.word:hover {
+    background-color: #DDD;
+    padding: 2px 4px;
+}
+
+#search_list {
+    height: 100%;
+    overflow-y: scroll;
+}

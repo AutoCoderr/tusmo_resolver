@@ -12,10 +12,11 @@ et de les sélectionner
 
     const scriptFiles = [
     	"libs.js",
-        "client/getDOMDatas.js",
-        "client/getLevelInfos.js",
-        "client/getWords.js", 
-        "client/getWordsGraphically.js"
+        "client/js/getDOMDatas.js",
+        "client/js/getLevelInfos.js",
+        "client/js/getWords.js",
+        "client/js/getWordsGraphically.js",
+        "client/js/pressKey.js"
     ]
 
     for (const scriptFile of scriptFiles) {
@@ -23,8 +24,21 @@ et de les sélectionner
 
 		script.src = window.url+scriptFile;
 
-		document.head.appendChild(script)	
+		document.head.appendChild(script);
     }
     
-    setTimeout(() => getWordsGraphically(), 1000)
+    const cssFiles = [
+        "client/css/style.css"
+    ]
+
+    for (const cssFile of cssFiles) {
+        const link = document.createElement("link");
+        
+        link.href = window.url+cssFile;
+        link.rel = "stylesheet";
+        
+        document.head.appendChild(link);
+    }
+    
+    setTimeout(() => getWordsGraphically(), 1000);
 ```
