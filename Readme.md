@@ -16,7 +16,8 @@ et de les sélectionner
         "js/getLevelInfos.js",
         "js/getWords.js",
         "js/getWordsGraphically.js",
-        "js/pressKey.js"
+        "js/pressKey.js",
+        "js/templateGetter.js"
     ]
 
     for (const scriptFile of scriptFiles) {

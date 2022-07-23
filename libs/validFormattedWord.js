@@ -1,6 +1,6 @@
 require("./stringFunctions");
 
-const charsToAvoid = [" ","-"];
+const charsToAvoid = [" ","-","'"];
 
 module.exports = function validFormattedWord(formattedWord) {
     return !formattedWord.some(letter => charsToAvoid.includes(letter))

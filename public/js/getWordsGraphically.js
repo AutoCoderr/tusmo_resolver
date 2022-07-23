@@ -1,39 +1,38 @@
-function getDOMNodeFromHtml(html) {
-	const template = document.createElement("template")
-	template.innerHTML = html;
-	return template.content.firstChild;
+function getInterface() {
+	return getTemplate('interface');
 }
 
-function getInterface(url = window.url) {
-	return fetch(url+"/html/template.html")
-		.then(res => res.text())
-		.then(html => getDOMNodeFromHtml(html))
+function getWordTemplate() {
+	return getTemplate('word');
 }
 
-let wordTemplate = null;
-
-async function getWordTemplate(url = window.url) {
-	return wordTemplate ??
-		fetch(url+"/html/word_template.html")
-			.then(res => res.text())
-			.then(html => {
-				wordTemplate = getDOMNodeFromHtml(html)
-				return wordTemplate;
-			})
+function getNoWordFoundTemplate() {
+	return getTemplate('no_word_found');
 }
 
-async function getWordsGraphically(url = window.url) {
-	const graphicInterface = await getInterface(url);
+async function getWordsGraphically() {
+	const url = window.url;
+
+	const graphicInterface = await getInterface();
 
 	document.body.appendChild(graphicInterface)
 
-	const [button,list] = ["search_button","search_list"].map(id => graphicInterface.querySelector('#'+id));
+	const [button,list,found_words_title] = ["search_button","search_list","found_words_title"].map(id => graphicInterface.querySelector('#'+id));
 
 	button.addEventListener("click", () => {
 		getWords(url).then(async words => {
 			list.innerHTML = "";
+
+			found_words_title.style.display = "inline-block";
+			found_words_title.querySelector("span").innerText = words.length;
+
+			if (words.length === 0) {
+				const noWordFoundTemplate = await getNoWordFoundTemplate();
+				list.appendChild(noWordFoundTemplate);
+			}
+
 			for (const {word,formattedWord} of words) {
-				const wordTemplate = await getWordTemplate(url).then(template => template.cloneNode(true));
+				const wordTemplate = await getWordTemplate();
 				const wordButton = wordTemplate.querySelector(".word");
 				wordButton.innerText = formattedWord
 				wordButton.title = word;

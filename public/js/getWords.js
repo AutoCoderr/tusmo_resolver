@@ -1,4 +1,6 @@
-function getWords(url = window.url) {
+function getWords() {
+	const url = window.url;
+
 	const {nbLevels, lenWord} = getWordMeta();
 
 	return fetch(url, {
