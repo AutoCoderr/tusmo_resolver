@@ -1,5 +1,7 @@
 const fs = require("fs/promises");
 const Word = require("./models/Word");
+const formatWord = require("./libs/formatWord");
+const validFormattedWord = require("./libs/validFormattedWord");
 
 const file = "lexique.csv";
 
@@ -15,20 +17,21 @@ module.exports = async function initDb() {
 }
 
 function eachLine({word}, i, total) {
-    if ((i+1) % 1000 === 0 || i+1 === total) {
+    if ((i+1) % 1000 === 0 || i+1 === total)
         console.log((i+1)+"/"+total)
-    }
+
     if (word === '')
+        return;
+
+    const formattedWord = formatWord(word);
+
+    if (!validFormattedWord(formattedWord))
         return;
 
     return Word.create({
         word,
-        formattedWord: formatWord(word)
+        formattedWord
     });
-}
-
-function formatWord(word) {
-    return word.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase()
 }
 
 async function browseLines(lines, eachLine) {
@@ -61,21 +64,3 @@ function toSkip({word}, {lastWord}) {
     }
     return {lastWord: word};
 }
-
-/*function browseLinesRec(lines, eachLine, i = 0, acc = {}) {
-    if (lines.length === 0)
-        return;
-
-    if (i === 0)
-        return browseLines(lines.slice(1), eachLine, i+1, acc);
-
-    const columnsValues = getColumns(lines[0]);
-
-    const newAcc = toSkip(columnsValues,acc)
-    if (newAcc === true)
-        return browseLines(lines.slice(1), eachLine, i, acc);
-
-    eachLine(columnsValues,i)
-
-    return browseLines(lines.slice(1), eachLine, i+1, newAcc);
-}*/

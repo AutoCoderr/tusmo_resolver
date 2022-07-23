@@ -5,7 +5,7 @@ function getDOMNodeFromHtml(html) {
 }
 
 function getInterface(url = window.url) {
-	return fetch(url+"/client/html/template.html")
+	return fetch(url+"/html/template.html")
 		.then(res => res.text())
 		.then(html => getDOMNodeFromHtml(html))
 }
@@ -14,7 +14,7 @@ let wordTemplate = null;
 
 async function getWordTemplate(url = window.url) {
 	return wordTemplate ??
-		fetch(url+"/client/html/word_template.html")
+		fetch(url+"/html/word_template.html")
 			.then(res => res.text())
 			.then(html => {
 				wordTemplate = getDOMNodeFromHtml(html)

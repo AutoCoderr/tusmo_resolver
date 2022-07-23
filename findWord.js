@@ -1,5 +1,5 @@
 const Word = require("./models/Word");
-require("./public/libs");
+require("./libs/public/numberFunctions");
 
 /*const t = {
     len: 9,

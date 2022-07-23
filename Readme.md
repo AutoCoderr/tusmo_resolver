@@ -11,12 +11,12 @@ et de les sélectionner
     window.url = "http://127.0.0.1:3000/";
 
     const scriptFiles = [
-    	"libs.js",
-        "client/js/getDOMDatas.js",
-        "client/js/getLevelInfos.js",
-        "client/js/getWords.js",
-        "client/js/getWordsGraphically.js",
-        "client/js/pressKey.js"
+    	"js/numberFunctions.js",
+        "js/getDOMDatas.js",
+        "js/getLevelInfos.js",
+        "js/getWords.js",
+        "js/getWordsGraphically.js",
+        "js/pressKey.js"
     ]
 
     for (const scriptFile of scriptFiles) {
@@ -28,7 +28,7 @@ et de les sélectionner
     }
     
     const cssFiles = [
-        "client/css/style.css"
+        "css/style.css"
     ]
 
     for (const cssFile of cssFiles) {
