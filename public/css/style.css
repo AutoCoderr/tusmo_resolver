@@ -7,24 +7,15 @@
     background-color: #EEE;
 }
 
-#search_button {
-    cursor: pointer;
-    background-color: #999;
-    padding: 2px 4px;
-}
-#search_button:hover {
-    background-color: #777;
-}
-
-.word {
+.set-word {
     cursor: pointer;
 }
-.word:hover {
+.set-word:hover {
     background-color: #DDD;
     padding: 2px 4px;
 }
 
-#found_words_title, .no_word_found, .word {
+#found_words_title, .no_word_found, .set-word {
     color: black;
 }
 
@@ -32,7 +23,7 @@
     display: none;
 }
 
-#search_list {
+#set-search_list {
     height: 100%;
     overflow-y: scroll;
 }

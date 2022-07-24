@@ -87,11 +87,11 @@ module.exports = function findWord({len,levels}) {
                 const unknownIndexes = unknownIndexesByLevel[i];
 
                 return Object.entries(computedBadPlaceds).some(([letter,indexes]) => {
-                    const nbAppear = unknownIndexes.filter(index => !indexes.includes(index) && word.formattedWord[index] === letter).length
+                    const nbAppear = unknownIndexes.filter(index => word.formattedWord[index] === letter).length
                     return (
                         nbAppear < indexes.length ||
                         (inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > indexes.length) ||
-                        (!inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > absents.length)
+                        (!inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > unknownIndexes.length-indexes.length)
                     )
                 })
             })

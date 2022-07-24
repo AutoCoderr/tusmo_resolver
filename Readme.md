@@ -41,5 +41,7 @@ et de les sélectionner
         document.head.appendChild(link);
     }
     
-    setTimeout(() => getWordsGraphically(), 1000);
+    setTimeout(() => {
+        showOrHideGetWordsInterface()
+    }, 1000);
 ```

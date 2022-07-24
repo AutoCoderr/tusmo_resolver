@@ -1,9 +1,10 @@
-const keysByLetter = {}
+let keysByLetter = {}
 
-setTimeout(() => {
-    for (const {node,key} of getKeys())
+function initKeys() {
+    keysByLetter = {};
+    for (const {node, key} of getKeys())
         keysByLetter[key] = node
-}, 1000);
+}
 
 function pressKey(letter) {
     if (!keysByLetter[letter])

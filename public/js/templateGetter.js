@@ -14,7 +14,7 @@ function getDOMNodeFromTemplate(template) {
 
 const templates = {
     interface: {
-        cache: false,
+        cache: true,
         cloneNode: false
     },
     no_word_found: {

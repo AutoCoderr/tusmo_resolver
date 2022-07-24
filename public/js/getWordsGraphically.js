@@ -1,51 +1,110 @@
 function getInterface() {
-	return getTemplate('interface');
+    return getTemplate('interface');
 }
 
 function getWordTemplate() {
-	return getTemplate('word');
+    return getTemplate('word');
 }
 
 function getNoWordFoundTemplate() {
-	return getTemplate('no_word_found');
+    return getTemplate('no_word_found');
 }
 
-async function getWordsGraphically() {
-	const url = window.url;
 
-	const graphicInterface = await getInterface();
+let pathname = location.pathname;
+function checkTabOnAction() {
+    setTimeout(async () => {
+        const newPathname = location.pathname;
+        if (newPathname !== pathname) {
+            pathname = newPathname;
+            showOrHideGetWordsInterface();
+        } else if (getTab() === null) {
+            hideGetWordsInterface();
+        }
+    }, 500);
+}
 
-	document.body.appendChild(graphicInterface)
+document.body.addEventListener("click", checkTabOnAction);
+document.body.addEventListener("keydown", checkTabOnAction);
 
-	const [button,list,found_words_title] = ["search_button","search_list","found_words_title"].map(id => graphicInterface.querySelector('#'+id));
+function canShowGetWordsInterface() {
+    return getTab() !== null && getKeyboard() !== null;
+}
 
-	button.addEventListener("click", () => {
-		getWords(url).then(async words => {
-			list.innerHTML = "";
+function showOrHideGetWordsInterface() {
+    if (canShowGetWordsInterface()) {
+        initKeys();
+        showGetWordsInterface();
+    } else
+        hideGetWordsInterface();
+}
 
-			found_words_title.style.display = "inline-block";
-			found_words_title.querySelector("span").innerText = words.length;
+async function hideGetWordsInterface() {
+    const graphicInterface = await getInterface();
+    if (!(graphicInterface.parentNode instanceof DocumentFragment))
+        graphicInterface.style.display = "none";
+}
 
-			if (words.length === 0) {
-				const noWordFoundTemplate = await getNoWordFoundTemplate();
-				list.appendChild(noWordFoundTemplate);
-			}
+async function showGetWordsInterface() {
+    const url = window.url;
 
-			for (const {word,formattedWord} of words) {
-				const wordTemplate = await getWordTemplate();
-				const wordButton = wordTemplate.querySelector(".word");
-				wordButton.innerText = formattedWord
-				wordButton.title = word;
+    const graphicInterface = await getInterface();
 
-				wordButton.addEventListener("click", () => {
-					for (const letter of formattedWord) {
-						pressKey(letter);
-					}
-					pressKey("ENTER");
-				})
+    if (graphicInterface.parentNode instanceof DocumentFragment) {
+        document.body.appendChild(graphicInterface);
+        graphicInterface.addEventListener("click", e => e.stopPropagation());
+    }
 
-				list.appendChild(wordTemplate);
-			}
-		})
-	})
+    graphicInterface.style.display = "block"
+
+    const [list, nb_found_words] = ["set-search_list", "set-nb_found_words"].map(id => graphicInterface.querySelector('#' + id));
+
+    nb_found_words.parentNode.style = "none";
+    list.innerHTML = "";
+
+    const {realNbLevels} = getWordMeta();
+    const nbFoundWords = getNbFoundWords();
+
+    getWords(url).then(async words => {
+
+        nb_found_words.parentNode.style.display = "inline-block";
+        nb_found_words.innerText = words.length;
+
+        if (words.length === 0) {
+            const noWordFoundTemplate = await getNoWordFoundTemplate();
+            list.appendChild(noWordFoundTemplate);
+        }
+
+        for (const {word, formattedWord} of words) {
+            const wordTemplate = await getWordTemplate();
+            const wordButton = wordTemplate.querySelector(".set-word");
+            wordButton.innerText = formattedWord
+            wordButton.title = word;
+
+            wordButton.addEventListener("click", () => {
+                for (const letter of formattedWord) {
+                    pressKey(letter);
+                }
+                pressKey("ENTER");
+
+                setTimeout(async () => {
+                    if (canShowGetWordsInterface()) {
+                        const {realNbLevels: newRealNbLevels} = getWordMeta();
+                        if (newRealNbLevels > realNbLevels) {
+                            showGetWordsInterface();
+                            return;
+                        }
+                        setTimeout(() => {
+                           if (nbFoundWords !== null && getTab() && getNbFoundWords() > nbFoundWords)
+                               showGetWordsInterface();
+                        }, 2000)
+                    } else {
+                        hideGetWordsInterface();
+                    }
+                }, 500)
+            })
+
+            list.appendChild(wordTemplate);
+        }
+    })
 }
