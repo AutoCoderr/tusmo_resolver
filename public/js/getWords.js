@@ -1,4 +1,4 @@
-function getWords() {
+function getWords(obj) {
 	const url = window.url;
 
 	const {nbLevels, lenWord} = getWordMeta();
@@ -9,9 +9,6 @@ function getWords() {
 			Accept: "application/json",
 			"Content-Type": "application/json"
 		},
-		body: JSON.stringify({
-			len: lenWord,
-			levels: nbLevels.map(i => getLevelInfos(i))
-		})
+		body: JSON.stringify(obj)
 	}).then(res => res.json());
 }

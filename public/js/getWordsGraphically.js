@@ -21,7 +21,7 @@ function checkTabOnAction() {
         } else if (getTab() === null) {
             hideGetWordsInterface();
         }
-    }, 500);
+    }, 1000);
 }
 
 document.body.addEventListener("click", checkTabOnAction);
@@ -62,10 +62,13 @@ async function showGetWordsInterface() {
     nb_found_words.parentNode.style = "none";
     list.innerHTML = "";
 
-    const {realNbLevels} = getWordMeta();
+    const {realNbLevels, nbLevels, lenWord} = getWordMeta();
     const nbFoundWords = getNbFoundWords();
 
-    getWords(url).then(async words => {
+    getWords({
+        len: lenWord,
+        levels: nbLevels.map(i => getLevelInfos(i))
+    }).then(async words => {
 
         nb_found_words.parentNode.style.display = "inline-block";
         nb_found_words.innerText = words.length;
