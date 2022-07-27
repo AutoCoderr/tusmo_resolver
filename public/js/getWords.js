@@ -12,3 +12,37 @@ function getWords(obj) {
 		body: JSON.stringify(obj)
 	}).then(res => res.json());
 }
+
+function tryWord(formattedWord, onLose = null, onNewLevel = null, onNewRound = null, onNotExistsWord = null) {
+	const {realNbLevels} = getWordMeta();
+	const nbFoundWords = getNbFoundWords();
+
+	for (const letter of formattedWord) {
+		pressKey(letter);
+	}
+	pressKey("ENTER");
+
+	setTimeout(async () => {
+		if (canPlayTusmo()) {
+			const {realNbLevels: newRealNbLevels, nbLevels} = getWordMeta();
+			if (newRealNbLevels > realNbLevels && onNewLevel) {
+				return onNewLevel(nbLevels-1);
+			}
+			setTimeout(() => {
+				const newNbFoundWords = getNbFoundWords();
+				const tab = getTab();
+
+				if (onNewRound && nbFoundWords !== null && tab && newNbFoundWords > nbFoundWords)
+					return onNewRound()
+
+				if (onNotExistsWord && tab && nbFoundWords !== null && newNbFoundWords === nbFoundWords)
+					return onNotExistsWord()
+
+				if (onLose && tab === null)
+					return onLose()
+			}, 2000)
+		} else if (onLose) {
+			return onLose();
+		}
+	}, 500)
+}

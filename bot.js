@@ -55,7 +55,7 @@ async function tryWords(url, shortId, playerId, words, data, currentRound = 1, c
 	)
 }
 
-async function tryParty() {
+async function tryGames() {
 	const url = "https://www.tusmo.xyz/graphql";
 
 	const shortId = await startMotus(url).then(getShortIdFromStartMotus);
@@ -80,7 +80,7 @@ function launch(methods) {
 	})
 }
 
-const methods = {tryParty};
+const methods = {tryGames};
 
 launch(methods);
 

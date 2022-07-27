@@ -101,3 +101,7 @@ function getNbFoundWords() {
     const div = document.querySelector(".game-header .flex");
     return div ? parseInt(div.getElementsByTagName("div")[1].innerText) : null;
 }
+
+function canPlayTusmo() {
+    return getTab() !== null && getKeyboard() !== null;
+}

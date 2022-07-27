@@ -27,12 +27,8 @@ function checkTabOnAction() {
 document.body.addEventListener("click", checkTabOnAction);
 document.body.addEventListener("keydown", checkTabOnAction);
 
-function canShowGetWordsInterface() {
-    return getTab() !== null && getKeyboard() !== null;
-}
-
 function showOrHideGetWordsInterface() {
-    if (canShowGetWordsInterface()) {
+    if (canPlayTusmo()) {
         initKeys();
         showGetWordsInterface();
     } else
@@ -46,7 +42,6 @@ async function hideGetWordsInterface() {
 }
 
 async function showGetWordsInterface() {
-    const url = window.url;
 
     const graphicInterface = await getInterface();
 
@@ -62,8 +57,7 @@ async function showGetWordsInterface() {
     nb_found_words.parentNode.style = "none";
     list.innerHTML = "";
 
-    const {realNbLevels, nbLevels, lenWord} = getWordMeta();
-    const nbFoundWords = getNbFoundWords();
+    const {nbLevels, lenWord} = getWordMeta();
 
     getWords({
         len: lenWord,
@@ -85,26 +79,12 @@ async function showGetWordsInterface() {
             wordButton.title = word;
 
             wordButton.addEventListener("click", () => {
-                for (const letter of formattedWord) {
-                    pressKey(letter);
-                }
-                pressKey("ENTER");
-
-                setTimeout(async () => {
-                    if (canShowGetWordsInterface()) {
-                        const {realNbLevels: newRealNbLevels} = getWordMeta();
-                        if (newRealNbLevels > realNbLevels) {
-                            showGetWordsInterface();
-                            return;
-                        }
-                        setTimeout(() => {
-                           if (nbFoundWords !== null && getTab() && getNbFoundWords() > nbFoundWords)
-                               showGetWordsInterface();
-                        }, 2000)
-                    } else {
-                        hideGetWordsInterface();
-                    }
-                }, 500)
+                tryWord(
+                    formattedWord,
+                    hideGetWordsInterface,
+                    showGetWordsInterface,
+                    showGetWordsInterface
+                )
             })
 
             list.appendChild(wordTemplate);

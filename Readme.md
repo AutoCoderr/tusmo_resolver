@@ -45,3 +45,33 @@ et de les sélectionner
         showOrHideGetWordsInterface()
     }, 1000);
 ```
+
+## Executer le bot coté front
+
+Avec ce bot, il possible de faire avancer automatiquement des parties.  
+Si l'option 'CAN_EDIT_WORDS' est activée dans le .env, les mots n'existant pas pour tusmo seront automatiquement
+supprimés de la base de données, et les mots que le bot n'a pas réussi à trouver y seront automatiquement enregistrés
+pour être trouvé la prochaine fois
+
+Exécuter ce script dans la console du navigateur sur le site de tusmo pour l'activer :
+
+```js
+    window.url = "http://127.0.0.1:3000/";
+
+    const scriptFiles = [
+    	"js/numberFunctions.js",
+        "js/getDOMDatas.js",
+        "js/getLevelInfos.js",
+        "js/getWords.js",
+        "js/pressKey.js",
+		"js/bot.js"
+    ]
+
+    for (const scriptFile of scriptFiles) {
+		const script = document.createElement('script');
+
+		script.src = window.url+scriptFile;
+
+		document.head.appendChild(script);
+    }
+```
