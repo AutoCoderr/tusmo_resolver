@@ -4,8 +4,6 @@ const cors = require("cors");
 const validate = require("./validate");
 const findWord = require("./findWord");
 
-//require("./libs/bot")();
-
 const app = express();
 
 app.use(cors());

@@ -5,7 +5,8 @@
   "main": "serv.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --trace-warnings --legacy-watch serv.js"
+    "start": "nodemon --trace-warnings --legacy-watch serv.js",
+    "tryParty": "node bot.js tryParty"
   },
   "author": "",
   "license": "ISC",

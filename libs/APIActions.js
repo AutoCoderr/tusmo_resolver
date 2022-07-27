@@ -51,7 +51,7 @@ function tryWord(url,word, shortId, playerId) {
 				word
 			}
 		})
-	})
+	}).then(getAPIResponse)
 }
 
 module.exports = {startMotus, joinMotus, tryWord};

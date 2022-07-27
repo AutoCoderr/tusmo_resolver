@@ -3,7 +3,7 @@ function getShortIdFromStartMotus({data: {startMotus: {shortId}}}) {
 }
 
 function getLevelFromAPIData({validation, word}) {
-	return validation.reduce(({placeds, badPlaceds, absents},type,i) => ({
+	return (validation??[]).reduce(({placeds, badPlaceds, absents},type,i) => ({
 		placeds: type === 'r' ? {
 			...placeds,
 			[i]: word[i]
@@ -16,8 +16,8 @@ function getLevelFromAPIData({validation, word}) {
 	}), {placeds: {}, badPlaceds: {}, absents: []})
 }
 
-function getLevelInfosFromTryWordResponse({data: {tryWord}}) {
-	return getLevelFromAPIData(tryWord);
+function getInfosFromTryWordResponse({data: {tryWord: {score, wordExists, hasFoundWord, ...tryWord}}}) {
+	return {score, wordExists, hasFoundWord, level: getLevelFromAPIData(tryWord)};
 }
 
 function getDatasFromJoinResponse({data: {joinMotus: {rounds, me: {rounds: myRounds}}}}) {
@@ -43,4 +43,4 @@ function getDatasFromJoinResponse({data: {joinMotus: {rounds, me: {rounds: myRou
 	}
 }
 
-module.exports = {getDatasFromJoinResponse,getLevelInfosFromTryWordResponse, getShortIdFromStartMotus}
+module.exports = {getDatasFromJoinResponse,getInfosFromTryWordResponse, getShortIdFromStartMotus}
