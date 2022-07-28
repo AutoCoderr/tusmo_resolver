@@ -1,6 +1,6 @@
 const findWords = require("./findWords");
 const {getAllPlaceds} = require("./globalLevelsData");
-const getWordModel = require("../models/getWordModel");
+const {getWordModel} = require("../models/Word");
 const calculWordEntropy = require("./calculWordEntropy");
 
 module.exports = async function findWordsAndGetEntropies({len, levels}) {

@@ -18,4 +18,8 @@ async function getWordModel(len) {
     return modelsByWordLen[len];
 }
 
-module.exports = getWordModel;
+function getLens() {
+    return Object.keys(modelsByWordLen).map(parseInt);
+}
+
+module.exports = {getWordModel, getLens};

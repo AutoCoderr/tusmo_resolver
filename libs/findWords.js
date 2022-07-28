@@ -1,4 +1,4 @@
-const getWordModel = require("../models/getWordModel");
+const {getWordModel} = require("../models/Word");
 const {getAllAbsents, getAllPlaceds, getAllBadPlaceds} = require("./globalLevelsData");
 
 

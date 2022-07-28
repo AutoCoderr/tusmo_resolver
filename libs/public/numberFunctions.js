@@ -18,3 +18,11 @@ Number.prototype.map = function(callback) {
 		callback(i)
 	], [])
 }
+Number.prototype.some = function(callback, i = 0) {
+	const n = this.valueOf();
+	if (i === n)
+		return false;
+	if (callback(i))
+		return true;
+	return n.some(callback,i+1);
+}

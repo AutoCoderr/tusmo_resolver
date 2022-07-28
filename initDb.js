@@ -1,6 +1,6 @@
 const fs = require("fs/promises");
 const { connect } = require("./Mongo");
-const getWordModel = require("./models/getWordModel");
+const {getWordModel} = require("./models/Word");
 const formatColumns = require("./libs/formatColumns");
 const validColumns = require("./libs/validColumns");
 
