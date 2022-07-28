@@ -4,7 +4,6 @@ const { connect } = require("../Mongo");
 const db = connect();
 
 const WordSchema = new Schema({
-    word: { type: String, required: true },
     formattedWord: { type: String, required: true }
 });
 

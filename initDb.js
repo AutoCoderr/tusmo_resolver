@@ -1,7 +1,7 @@
 const fs = require("fs/promises");
 const Word = require("./models/Word");
-const formatWord = require("./libs/formatWord");
-const validFormattedWord = require("./libs/validFormattedWord");
+const formatColumns = require("./libs/formatColumns");
+const validColumns = require("./libs/validColumns");
 
 const file = "lexique.csv";
 
@@ -23,14 +23,8 @@ function eachLine({word}, i, total) {
     if (word === '')
         return;
 
-    const formattedWord = formatWord(word);
-
-    if (!validFormattedWord(formattedWord))
-        return;
-
     return Word.create({
-        word,
-        formattedWord
+        formattedWord: word
     });
 }
 
@@ -39,7 +33,9 @@ async function browseLines(lines, eachLine) {
     for (let i=0;i<lines.length;i++) {
         if (i === 0)
             continue;
-        const columnsValues = getColumns(lines[i]);
+        const columnsValues = formatColumns(getColumns(lines[i]));
+        if (!validColumns(columnsValues))
+            continue;
         const newAcc = toSkip(columnsValues,acc)
         if (newAcc === true)
             continue;

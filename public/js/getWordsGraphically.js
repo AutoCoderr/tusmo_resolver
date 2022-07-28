@@ -72,11 +72,10 @@ async function showGetWordsInterface() {
             list.appendChild(noWordFoundTemplate);
         }
 
-        for (const {word, formattedWord} of words) {
+        for (const {formattedWord} of words) {
             const wordTemplate = await getWordTemplate();
             const wordButton = wordTemplate.querySelector(".set-word");
-            wordButton.innerText = formattedWord
-            wordButton.title = word;
+            wordButton.innerText = formattedWord;
 
             wordButton.addEventListener("click", () => {
                 tryWord(
