@@ -1,8 +1,9 @@
-const initDb = require("./initDb");
 const express = require("express");
 const cors = require("cors");
 const validate = require("./validate");
-const findWord = require("./findWord");
+const findWordsAndGetEntropies = require("./libs/findWordsAndGetEntropies");
+
+require("./libs/listCombinasonsWordMask");
 
 const app = express();
 
@@ -15,14 +16,10 @@ app.post("/", (req, res) => {
     if (!validate(req.body))
         return res.sendStatus(400);
 
-    findWord(req.body)
+    findWordsAndGetEntropies(req.body)
         .then(words => res.json(words));
 })
 
 app.listen(process.env.PORT ?? 3000, () => {
     console.log("Server listening");
-})
-
-initDb().then(() => {
-    console.log("database initialisation finished");
 })

@@ -1,19 +1,20 @@
 const fs = require("fs/promises");
-const Word = require("./models/Word");
+const { connect } = require("./Mongo");
+const getWordModel = require("./models/getWordModel");
 const formatColumns = require("./libs/formatColumns");
 const validColumns = require("./libs/validColumns");
 
 const file = "lexique.csv";
 
-module.exports = async function initDb() {
-    const nbWords = await Word.count();
+async function initDb() {
+    await deleteAllCollections();
+    console.log("All collections deleted");
 
-    if (nbWords > 0)
-        return
     console.log("Loading all words");
     return fs.readFile(__dirname+"/"+file)
         .then(chunk => chunk.toString().split("\n"))
-        .then(lines => browseLines(lines,eachLine));
+        .then(lines => browseLines(lines,eachLine))
+        .then(() => process.exit());
 }
 
 function eachLine({word}, i, total) {
@@ -23,9 +24,22 @@ function eachLine({word}, i, total) {
     if (word === '')
         return;
 
-    return Word.create({
-        formattedWord: word
-    });
+    return getWordModel(word.length).then(Word =>
+        Word.create({
+            word
+        })
+    )
+}
+
+async function deleteAllCollections() {
+    const db = await connect().then(mongoose => mongoose.connection.db);
+    //console.log(db);
+
+    return db.listCollections().toArray()
+        .then(collections =>
+            collections.map(({name}) => db.dropCollection(name))
+        )
+        .then(promises => Promise.all(promises));
 }
 
 async function browseLines(lines, eachLine) {
@@ -60,3 +74,5 @@ function toSkip({word}, {lastWord}) {
     }
     return {lastWord: word};
 }
+
+initDb();

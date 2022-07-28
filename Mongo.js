@@ -8,34 +8,38 @@ const nbRetryMax = 20;
 let database;
 
 const connect = () => {
+    return new Promise(resolve => {
+        if (database) {
+            resolve(database);
+            return;
+        }
 
-    if (nbRetry >= nbRetryMax) {
-        console.log("Connexion impossible");
-        return;
-    } else if (nbRetry > 0) {
-        console.log("Re try to connect")
-    }
+        if (nbRetry >= nbRetryMax) {
+            throw new Error("Connexion impossible");
+        } else if (nbRetry > 0) {
+            console.log("Re try to connect")
+        }
 
-    if (database) return database;
+        const url = 'mongodb://' + MONGO_HOST + ':27017/' + MONGO_INITDB_DATABASE;
 
-    const url = 'mongodb://' + MONGO_HOST + ':27017/' + MONGO_INITDB_DATABASE;
+        mongoose.connect(url);
 
-    mongoose.connect(url);
+        database = mongoose;
 
-    database = mongoose;
+        database.connection.once("open", () => {
+            console.log("Connected to database");
+            resolve(database);
+        });
 
-    database.connection.once("open", () => {
-        console.log("Connected to database");
+        database.connection.on("error", () => {
+            console.log("Error connecting to database");
+            database = undefined;
+            nbRetry += 1;
+            setTimeout(() => {
+                resolve(connect());
+            }, 250);
+        });
     });
-
-    database.connection.on("error", () => {
-        console.log("Error connecting to database");
-        database = undefined;
-        nbRetry += 1;
-        setTimeout(connect, 250);
-    });
-
-    return database;
 };
 
 const disconnect = () => {

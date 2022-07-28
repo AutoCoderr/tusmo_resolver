@@ -72,14 +72,14 @@ async function showGetWordsInterface() {
             list.appendChild(noWordFoundTemplate);
         }
 
-        for (const {formattedWord} of words) {
+        for (const {word,entropy} of words) {
             const wordTemplate = await getWordTemplate();
             const wordButton = wordTemplate.querySelector(".set-word");
-            wordButton.innerText = formattedWord;
+            wordButton.innerText = word+' ('+entropy+')';
 
             wordButton.addEventListener("click", () => {
                 tryWord(
-                    formattedWord,
+                    word,
                     hideGetWordsInterface,
                     showGetWordsInterface,
                     showGetWordsInterface

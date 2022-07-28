@@ -13,11 +13,11 @@ function getWords(obj) {
 	}).then(res => res.json());
 }
 
-function tryWord(formattedWord, onLose = null, onNewLevel = null, onNewRound = null, onNotExistsWord = null) {
+function tryWord(word, onLose = null, onNewLevel = null, onNewRound = null, onNotExistsWord = null) {
 	const {realNbLevels} = getWordMeta();
 	const nbFoundWords = getNbFoundWords();
 
-	for (const letter of formattedWord) {
+	for (const letter of word) {
 		pressKey(letter);
 	}
 	pressKey("ENTER");
