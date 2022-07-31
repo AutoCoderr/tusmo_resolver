@@ -44,5 +44,5 @@ function tryWord(word, onLose = null, onNewLevel = null, onNewRound = null, onNo
 		} else if (onLose) {
 			return onLose();
 		}
-	}, 500)
+	}, 1000)
 }

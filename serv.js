@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const validate = require("./validate");
-const findWordsAndGetEntropies = require("./libs/findWordsAndGetEntropies");
+const findWords = require("./libs/findWords");
 
 require("./libs/listCombinasonsWordMask");
 
@@ -16,7 +16,7 @@ app.post("/", (req, res) => {
     if (!validate(req.body))
         return res.sendStatus(400);
 
-    findWordsAndGetEntropies(req.body)
+    findWords(req.body)
         .then(words => res.json(words));
 })
 

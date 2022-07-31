@@ -3,6 +3,7 @@ const {getAllAbsents, getAllPlaceds, getAllBadPlaceds} = require("./globalLevels
 
 
 require("./public/numberFunctions");
+require("./stringFunctions");
 
 /*const t = {
     len: 9,
@@ -57,36 +58,99 @@ module.exports = async function findWord({len, levels},_allPlaceds = null,_allBa
 	})
 		.then(words => words.map(({word}) => word))
 		.then(words => {
-			const computedBadPlacedsByLevel = levels.map(({badPlaceds}) =>
-				Object.entries(badPlaceds).reduce((acc, [index, letter]) => ({
+			/*
+				Formule mathématique pour calculer le nombre précis d'occurences attendues pour chaque lettre jaune :
+				Pour chaque lettre :
+
+				j(n): nombre de jaunes au niveau n
+				r(n): nombre de rouges au niveau n
+				s(n): si j(n) est strict ou non
+
+				J : nombre de jaunes attendus = 0
+				R : nombre de rouges à la dernière ligne = 0
+				S : si oui, vérifier si > à J, sinon vérifier si >= à J = false
+
+				Exemple :
+				0:
+				j(0) = 2 ; r(0) = 1 ; s(0) = false
+				1:
+				j(1) = 2 ; r(1) = 2 ; s(0) = true
+				2:
+				j(2) = 4 ; r(2) = 0
+
+
+				Niveau n = 0
+				J = j(0)
+				R = r(0)
+				S = s(0)
+
+
+				Niveau n > 0
+
+				l = r(n)-R
+				R = r(n)
+				J = max(j(n),J-l)
+				S = S ou s(n)
+			*/
+
+			const {currentNbBadPlacedsByLetter, globalIsStrictByBadPlacedLetter} = levels.reduce(({currentNbPlacedsByLetter,currentNbBadPlacedsByLetter, globalIsStrictByBadPlacedLetter},{placeds,badPlaceds,absents}) => {
+				// defini r(n) pour chaque lettre
+				const nbPlacedsByLetter = Object.values(placeds).reduce((acc,letter) => ({
 					...acc,
-					[letter]: acc[letter] ? [...acc[letter], parseInt(index)] : [parseInt(index)]
+					[letter]: acc[letter] ? acc[letter]+1 : 1
 				}), {})
-			);
-			const inAbsentBadPlacedLetterByLevel = levels.map(({absents}, i) =>
-				Object.keys(computedBadPlacedsByLevel[i]).reduce((acc, letter) => ({
+				// defini j(n) pour chaque lettre
+				const nbBadPlacedsByLetter = Object.values(badPlaceds).reduce((acc,letter) => ({
+					...acc,
+					[letter]: acc[letter] ? acc[letter]+1 : 1
+				}), {})
+				// defini s(n) pour chaque lettre
+				const isStrictByBadPlacedLetter = Object.keys(nbBadPlacedsByLetter).reduce((acc,letter) => ({
 					...acc,
 					[letter]: absents.includes(letter)
 				}), {})
-			)
-			const unknownIndexesByLevel = levels.map(({placeds}) =>
-				len.filter(i => placeds[i] === undefined)
-			);
 
-			return words.filter(word =>
-				!levels.some(({absents}, i) => {
-					const computedBadPlaceds = computedBadPlacedsByLevel[i];
-					const unknownIndexes = unknownIndexesByLevel[i];
 
-					return Object.entries(computedBadPlaceds).some(([letter, indexes]) => {
-						const nbAppear = unknownIndexes.filter(index => word[index] === letter).length
-						return (
-							nbAppear < indexes.length ||
-							(inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > indexes.length) ||
-							(!inAbsentBadPlacedLetterByLevel[i][letter] && nbAppear > unknownIndexes.length - indexes.length)
-						)
-					})
-				})
-			)
+				// l = r(n)-R pour chaque lettre
+				const differencesNbPlacedByLettersFromCurrentLevel = Object.entries(nbPlacedsByLetter).reduce((acc,[letter,n]) => ({
+					...acc,
+					[letter]: n - (currentNbPlacedsByLetter[letter]??0)
+				}), {})
+				const differencesNbPlacedByLetters = Object.entries(currentNbPlacedsByLetter).reduce((acc,[letter,n]) => ({
+					...acc,
+					[letter]: acc[letter] ?? (0 - n)
+				}), differencesNbPlacedByLettersFromCurrentLevel);
+
+				// R = r(n) pour chaque lettre
+				const newCurrentNbPlacedsByLetter = nbPlacedsByLetter;
+
+				// J = max(j(n),J-l) pour chaque lettre
+				const newCurrentNbBadPlacedsByLetter = Object.entries(nbBadPlacedsByLetter).reduce((acc,[letter,n]) => ({
+					...acc,
+					[letter]: Math.max(n,currentNbBadPlacedsByLetter[letter] ? currentNbBadPlacedsByLetter[letter]-(differencesNbPlacedByLetters[letter]??0) : 0)
+				}), {});
+
+				// S = S ou s(n) pour chaque lettre
+				const newGlobalIsStrictByBadPlacedLetter = Object.entries(isStrictByBadPlacedLetter).reduce((acc,[letter,strict]) => ({
+					...acc,
+					[letter]: globalIsStrictByBadPlacedLetter[letter] || strict
+				}), {})
+
+				return {
+					currentNbPlacedsByLetter: newCurrentNbPlacedsByLetter,
+					currentNbBadPlacedsByLetter: newCurrentNbBadPlacedsByLetter,
+					globalIsStrictByBadPlacedLetter: newGlobalIsStrictByBadPlacedLetter
+				}
+			}, {currentNbPlacedsByLetter: {}, currentNbBadPlacedsByLetter: {}, globalIsStrictByBadPlacedLetter: {}});
+
+			const {placeds: lastPlaceds} = levels[levels.length-1];
+
+			return words.filter(word => !Object.entries(currentNbBadPlacedsByLetter).some(([letter,n]) => {
+				const nbOccurs = word.count((c,i) => lastPlaceds[i] === undefined && c === letter);
+				return (
+					nbOccurs < n ||
+					(globalIsStrictByBadPlacedLetter[letter] && nbOccurs > n)
+				)
+			})).map(word => ({word}));
 		})
 }
