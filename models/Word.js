@@ -25,6 +25,8 @@ async function getWordModel(len) {
 
     const WordSchema = new Schema({
         word: { type: String, required: true },
+        percentUse: { type: Number, required: false },
+        nbUse: { type: Number, required: false },
         combinaisons: [CombinaisonScema]
     });
 

@@ -8,6 +8,7 @@
     "start": "nodemon --trace-warnings --legacy-watch serv.js",
     "tryParty": "node bot.js tryGames",
     "initDb": "node initDb.js",
+    "initDbFromTextSources": "node initDbFromTextSources.js",
     "initWordEntropies": "node initWordEntropies.js"
   },
   "author": "",

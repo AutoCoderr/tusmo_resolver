@@ -1,7 +1,7 @@
 const fs = require("fs/promises");
 const { connect } = require("./Mongo");
 const {getWordModel} = require("./models/Word");
-const formatColumns = require("./libs/formatColumns");
+const {formatColumns} = require("./libs/format");
 const validColumns = require("./libs/validColumns");
 
 const file = "lexique.csv";

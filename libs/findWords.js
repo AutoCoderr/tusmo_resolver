@@ -4,6 +4,7 @@ const {getAllAbsents, getAllPlaceds, getAllBadPlaceds} = require("./globalLevels
 
 require("./public/numberFunctions");
 require("./stringFunctions");
+require("./objectFunctions");
 
 /*const t = {
     len: 9,
@@ -55,8 +56,7 @@ module.exports = async function findWord({len, levels},_allPlaceds = null,_allBa
 
 	return Word.find({
 		word: {$regex: generateRegex({len, levels},allAbsents,allPlaceds,allBadPlaceds)}
-	})
-		.then(words => words.map(({word}) => word))
+	}).sort({percentUse: -1})
 		.then(words => {
 			/*
 				Formule mathématique pour calculer le nombre précis d'occurences attendues pour chaque lettre jaune :
@@ -98,28 +98,28 @@ module.exports = async function findWord({len, levels},_allPlaceds = null,_allBa
 				const nbPlacedsByLetter = Object.values(placeds).reduce((acc,letter) => ({
 					...acc,
 					[letter]: acc[letter] ? acc[letter]+1 : 1
-				}), {})
+				}).freeze(), {}.freeze())
 				// defini j(n) pour chaque lettre
 				const nbBadPlacedsByLetter = Object.values(badPlaceds).reduce((acc,letter) => ({
 					...acc,
 					[letter]: acc[letter] ? acc[letter]+1 : 1
-				}), {})
+				}).freeze(), {}.freeze())
 				// defini s(n) pour chaque lettre
 				const isStrictByBadPlacedLetter = Object.keys(nbBadPlacedsByLetter).reduce((acc,letter) => ({
 					...acc,
 					[letter]: absents.includes(letter)
-				}), {})
+				}).freeze(), {}.freeze())
 
 
 				// l = r(n)-R pour chaque lettre
 				const differencesNbPlacedByLettersFromCurrentLevel = Object.entries(nbPlacedsByLetter).reduce((acc,[letter,n]) => ({
 					...acc,
 					[letter]: n - (currentNbPlacedsByLetter[letter]??0)
-				}), {})
+				}).freeze(), {}.freeze())
 				const differencesNbPlacedByLetters = Object.entries(currentNbPlacedsByLetter).reduce((acc,[letter,n]) => ({
 					...acc,
 					[letter]: acc[letter] ?? (0 - n)
-				}), differencesNbPlacedByLettersFromCurrentLevel);
+				}).freeze(), differencesNbPlacedByLettersFromCurrentLevel);
 
 				// R = r(n) pour chaque lettre
 				const newCurrentNbPlacedsByLetter = nbPlacedsByLetter;
@@ -128,29 +128,29 @@ module.exports = async function findWord({len, levels},_allPlaceds = null,_allBa
 				const newCurrentNbBadPlacedsByLetter = Object.entries(nbBadPlacedsByLetter).reduce((acc,[letter,n]) => ({
 					...acc,
 					[letter]: Math.max(n,currentNbBadPlacedsByLetter[letter] ? currentNbBadPlacedsByLetter[letter]-(differencesNbPlacedByLetters[letter]??0) : 0)
-				}), {});
+				}).freeze(), {}.freeze());
 
 				// S = S ou s(n) pour chaque lettre
 				const newGlobalIsStrictByBadPlacedLetter = Object.entries(isStrictByBadPlacedLetter).reduce((acc,[letter,strict]) => ({
 					...acc,
 					[letter]: globalIsStrictByBadPlacedLetter[letter] || strict
-				}), {})
+				}).freeze(), {}.freeze())
 
 				return {
 					currentNbPlacedsByLetter: newCurrentNbPlacedsByLetter,
 					currentNbBadPlacedsByLetter: newCurrentNbBadPlacedsByLetter,
 					globalIsStrictByBadPlacedLetter: newGlobalIsStrictByBadPlacedLetter
-				}
-			}, {currentNbPlacedsByLetter: {}, currentNbBadPlacedsByLetter: {}, globalIsStrictByBadPlacedLetter: {}});
+				}.freeze();
+			}, {currentNbPlacedsByLetter: {}, currentNbBadPlacedsByLetter: {}, globalIsStrictByBadPlacedLetter: {}}.freeze());
 
 			const {placeds: lastPlaceds} = levels[levels.length-1];
 
-			return words.filter(word => !Object.entries(currentNbBadPlacedsByLetter).some(([letter,n]) => {
+			return words.filter(({word}) => !Object.entries(currentNbBadPlacedsByLetter).some(([letter,n]) => {
 				const nbOccurs = word.count((c,i) => lastPlaceds[i] === undefined && c === letter);
 				return (
 					nbOccurs < n ||
 					(globalIsStrictByBadPlacedLetter[letter] && nbOccurs > n)
 				)
-			})).map(word => ({word}));
+			}))
 		})
 }

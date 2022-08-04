@@ -72,10 +72,10 @@ async function showGetWordsInterface() {
             list.appendChild(noWordFoundTemplate);
         }
 
-        for (const {word,entropy} of words) {
+        for (const {word,percentUse} of words) {
             const wordTemplate = await getWordTemplate();
             const wordButton = wordTemplate.querySelector(".set-word");
-            wordButton.innerText = word+' ('+entropy+')';
+            wordButton.innerText = word+(percentUse ? ' ('+(Math.round(percentUse*1000)/1000)+'%)' : '');
 
             wordButton.addEventListener("click", () => {
                 tryWord(
