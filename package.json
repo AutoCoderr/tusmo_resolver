@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --trace-warnings --legacy-watch serv.js",
     "tryParty": "node bot.js tryGames",
-    "initDb": "node initDb.js"
+    "initDb": "node initDb.js",
+    "initWordEntropies": "node initWordEntropies.js"
   },
   "author": "",
   "license": "ISC",

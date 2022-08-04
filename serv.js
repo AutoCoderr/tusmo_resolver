@@ -1,9 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const validate = require("./validate");
+const validateRequest = require("./libs/validateRequest");
 const findWords = require("./libs/findWords");
-
-require("./libs/listCombinasonsWordMask");
 
 const app = express();
 
@@ -13,7 +11,7 @@ app.use(express.static(__dirname+"/public"));
 app.use("/js", express.static(__dirname+"/libs/public"));
 
 app.post("/", (req, res) => {
-    if (!validate(req.body))
+    if (!validateRequest(req.body))
         return res.sendStatus(400);
 
     findWords(req.body)

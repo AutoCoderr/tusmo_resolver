@@ -33,7 +33,6 @@ function eachLine({word}, i, total) {
 
 async function deleteAllCollections() {
     const db = await connect().then(mongoose => mongoose.connection.db);
-    //console.log(db);
 
     return db.listCollections().toArray()
         .then(collections =>

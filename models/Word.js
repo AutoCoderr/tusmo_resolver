@@ -1,7 +1,21 @@
 const {Schema} = require("mongoose");
 const { connect } = require("../Mongo");
 
-const modelsByWordLen = {}
+const modelsByWordLen = {};
+
+const IndexAndLetterSchema = new Schema({
+    index: Number,
+    letter: String
+})
+
+const CombinaisonScema = new Schema({
+    hash: String,
+    placeds: [IndexAndLetterSchema],
+    badPlaceds: [IndexAndLetterSchema],
+    absents: [String],
+    nbWords: Number,
+    words: [String]
+});
 
 async function getWordModel(len) {
     if (modelsByWordLen[len])
@@ -10,7 +24,8 @@ async function getWordModel(len) {
     const db = await connect();
 
     const WordSchema = new Schema({
-        word: { type: String, required: true }
+        word: { type: String, required: true },
+        combinaisons: [CombinaisonScema]
     });
 
     modelsByWordLen[len] = db.model('Word_'+len, WordSchema);
@@ -18,8 +33,14 @@ async function getWordModel(len) {
     return modelsByWordLen[len];
 }
 
-function getLens() {
-    return Object.keys(modelsByWordLen).map(parseInt);
+async function getAllWordModels() {
+    const db = await connect().then(mongoose => mongoose.connection.db);
+
+    return db.listCollections().toArray()
+        .then(collections => collections.filter(({name}) => new RegExp("^word\\_[0-9]{1,2}$").test(name)))
+        .then(collections => Promise.all(
+            collections.map(({name}) => getWordModel(name.split("_")[1] ))
+        ))
 }
 
-module.exports = {getWordModel, getLens};
+module.exports = {getWordModel, getAllWordModels};

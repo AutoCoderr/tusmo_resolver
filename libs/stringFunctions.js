@@ -1,12 +1,12 @@
-String.prototype.some = function(callback) {
+String.prototype.some = function(callback, i = 0) {
     const str = this.valueOf();
-    if (str === "")
+    if (i === str.length)
         return false;
 
-    if (callback(str[0]))
+    if (callback(str[i],i))
         return true;
 
-    return str.substring(1).some(callback);
+    return str.some(callback, i+1);
 }
 
 String.prototype.count = function(callback, n = 0, i= 0) {

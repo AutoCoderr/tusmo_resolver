@@ -1,4 +1,4 @@
-module.exports = function validate({len,levels}) {
+module.exports = function validateRequest({len,levels}) {
     return (
         typeof(len) === "number" &&
         levels instanceof Array &&
